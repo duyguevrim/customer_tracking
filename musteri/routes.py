@@ -181,8 +181,6 @@ def musteri_tutar_duzenleme(musteri_id):
 def grafik():
     users = User.query.all()
     user = User.query.get(26)
-    print(user.id)
-    print(user.name)
     return render_template("rapor.html", user=user)
 
 @musteri_bp.route('/musteri/rapor', methods=['GET', 'POST'])
@@ -193,16 +191,13 @@ def rapor():
     musteriler = Musteri.query.all()
     index = 2
 
-    output = excel.make_response(wb)
     for musteri in musteriler:
-        print(musteri.isim)
         sheet["A" + str(index)].value = musteri.isim
         sheet["B" + str(index)].value = musteri.telefon
         sheet["C" + str(index)].value = musteri.bakiye
         sheet["D" + str(index)].value = musteri.tahsilat
         sheet["E" + str(index)].value = musteri.guncel_bakiye
         index += 1
-        print(index)
 
     wb.headers["Content-Disposition"] = "attachment; filename=" + \
                                             "sheet.xlsx"
@@ -210,7 +205,6 @@ def rapor():
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     file_name = 'Ekim 2020 Tahsilat Hedefi-raporr.xlsx'
     wb.save(file_name)
-    print("burd")
     return send_file(file_name, attachment_filename=file_name, as_attachment=True)
 
 @musteri_bp.route('/ekle/<int:musteri_id>', methods=['GET', 'POST'])
@@ -220,9 +214,7 @@ def add_odeme(musteri_id):
     user = User.query.get(musteri.user_id)
     form = AddOdemeForm()
     user = User.query.get(26)
-    print("lkfdşlksdşf")
     if form.validate_on_submit():
-        print("kjkfjdsf")
         tutar = form.tutar.data
         date = form.create_date.data
         odeme = Odeme(tutar=tutar, musteri_id=musteri.id, create_date=date)
@@ -243,7 +235,6 @@ def indirim_ekle(musteri_id):
     musteri = Musteri.query.get(musteri_id)
     user = User.query.get(musteri.user_id)
     indirim_form = IndirimForm()
-    print(musteri.isim)
     if indirim_form.validate_on_submit():
         indirim_tutari = indirim_form.indirim_tutari.data
         user.kirkbes_bakiye -= indirim_tutari

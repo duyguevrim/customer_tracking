@@ -23,10 +23,8 @@ def add_odeme(siparis_id):
     siparis = Siparis.query.get(siparis_id)
     # user = User.query.get(siparis.user_id)
     form = AddOdemeForm()
-    print("deneme1")
     user = User.query.get(25)
     if form.validate_on_submit():
-        print("deneme2")
         tutar = form.tutar.data
         date = form.create_date.data
         guncel_odeme = GuncelOdeme(tutar=tutar, siparis_id=siparis.id, create_date=date)
@@ -43,9 +41,7 @@ def add_odeme(siparis_id):
 def add_siparis():
     form = SiparisForm()
     form.assistans.choices = [(str(value), str(key)) for key, value in employees_name.items()]
-    print("deneme1:(")
     if form.validate_on_submit():
-        print("deneme2:(")
         proje_no = form.proje_no.data
         musteri_adi = form.isim.data
         siparis_tutari = form.tutar.data
@@ -57,12 +53,10 @@ def add_siparis():
                           son_odeme_tarihi=son_odeme_tarihi, isin_alinma_tarihi=isin_alinma_tarihi,
                           siparis_son_durum=siparis_son_durum, user_id=user_id)
         db.session.add(siparis)
-        print("deneme3:(")
         db.session.commit()
         user = User.query.get(siparis.user_id)
         user.toplam_siparis_tutari += siparis.siparis_tutari
         db.session.commit()
-        print("deneme4:(")
         return redirect(url_for("guncel_modul.add_siparis"))
     return render_template("siparis_ekle.html", form=form)
 
@@ -85,7 +79,6 @@ def delete_odeme(odeme_id):
 def siparis_list():
     son_odeme_ay = datetime.today().month
     son_odeme_yil = datetime.today().year
-    print(son_odeme_ay)
     if current_user.role == "Finance":
         siparisler = Siparis.query.filter(and_(extract('month', Siparis.son_odeme_tarihi) == son_odeme_ay), extract('year', Siparis.son_odeme_tarihi) == son_odeme_yil).all()
         return render_template('siparisler_all.html', siparisler=siparisler)
@@ -98,11 +91,6 @@ def siparis_list():
 def siparis_list_finance():
     son_odeme_ay = datetime.today().month - 1
     siparisler = Siparis.query.filter_by(user_id = 21).all()
-    print("burdaaaaaaaaaaaaaaaaaaaaaaa")
-    print(son_odeme_ay)
-    for siparis in siparisler:
-        print(siparis.user_id)
-        print(1)
     return render_template("siparis_list.html", siparisler=siparisler)
 
 
@@ -119,17 +107,14 @@ def siparisler_all():
 def delete_siparis(siparis_id):
     siparis = Siparis.query.get(siparis_id)
     user = User.query.get(siparis.user_id)
-    print(user.toplam_siparis_tutari)
-    print(user.name)
-    print(user.toplam_siparis_tahsilati)
+
     user.toplam_siparis_tutari -= siparis.siparis_tutari
     user.toplam_siparis_tahsilati -= siparis.tahsilat
     siparis__id = siparis.id
     # odeme = GuncelOdeme.query.filter_by(siparis_id=siparis__id).first()
     # db.session.delete(odeme)
     # db.session.commit()
-    print(user.toplam_siparis_tutari)
-    print(user.toplam_siparis_tahsilati)
+
     db.session.delete(siparis)
     db.session.commit()
     return redirect(url_for('guncel_modul.siparis_list'))
@@ -140,7 +125,6 @@ def delete_siparis(siparis_id):
 def list_guncel_odeme():
     month = datetime.today().month-1
     guncel_odemeler = GuncelOdeme.query.filter(GuncelOdeme.id > int(7132)).all()
-    print(month)
     return render_template('guncel_odemeler.html', guncel_odemeler=guncel_odemeler)
 
 
@@ -150,8 +134,7 @@ def list_guncel_odeme():
 def tablo():
     users = User.query.all()
     user = User.query.get(25)
-    print(user.id)
-    print(user.name)
+
     return render_template("rapor.html", user=user)
 
 

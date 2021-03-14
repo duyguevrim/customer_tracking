@@ -1,6 +1,4 @@
 from company import db
-from openpyxl import load_workbook
-from company.models import User
 from datetime import datetime
 
 
@@ -50,24 +48,3 @@ class Indirim(db.Model):
 
 
 
-
-
-#
-# ayge_excel = load_workbook("ids/zeynep-sari.xlsx")
-# ayge_sheet = ayge_excel.active
-#
-# index = 2
-#
-# user1 = User.query.get(19)
-#
-# while index <= ayge_sheet.max_row:
-#     musteri_adi = ayge_sheet["A" + str(index)].value
-#     mail = ayge_sheet["B" + str(index)].value
-#     telefon = ayge_sheet["C" + str(index)].value
-#     bakiye = ayge_sheet["D" + str(index)].value
-#     parasut_no = ayge_sheet["E" + str(index)].value
-#     parasut_link = ayge_sheet["F" + str(index)].value
-#     musteri = Musteri(isim=musteri_adi, telefon=telefon, bakiye=bakiye, mail=mail, parasut_no=parasut_no, parasut_odeme_linki=parasut_link, user_id=user1.id)
-#     db.session.add(musteri)
-#     db.session.commit()
-#     index += 1

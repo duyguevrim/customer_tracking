@@ -35,11 +35,7 @@ def siparisname(siparis_id):
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    # if current_user.role == "Employee":
-    #     veriler = get_current_user_graph()
-    #     tarihler = [veri[0].strftime('%d/%m/%Y') for veri in veriler]
-    #     odemeler = [veri[1] for veri in veriler]
-    #     return render_template('dashboard.html', tarihler=tarihler, odemeler=odemeler)
+
     if current_user.role == "Finance":
         bekleyenler = Tahsilat.query.filter_by(durum="Onay Bekliyor").all()
         onaylananlar = Tahsilat.query.filter_by(durum="Onaylandı").all()
