@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block add_head %}
+    <title>Sipariş Düzenle</title>
+    <script src="{{ url_for('static', filename='js/plugins/notifications/sweet_alert.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/styling/uniform.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/bootstrap_multiselect.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/styling/switchery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/form_inputs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/extra_sweetalert.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="page-header page-header-light">
+        <div class="page-header-content header-elements-md-inline">
+            <div class="page-title d-flex">
+                <h4><span class="font-weight-semibold">Tahsilat</span> - Sipariş Düzenle</h4>
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+        </div>
+
+        <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+            <div class="d-flex">
+                <div class="breadcrumb">
+                    <a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Sipariş</a>
+                    <span class="breadcrumb-item active">Sipariş Düzenle</span>
+                </div>
+
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+        </div>
+    </div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Sipariş</strong>
+            </div>
+            <div class="card-body">
+                <!-- Credit Card -->
+                <div id="pay-invoice">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h3 class="text-center">Sipariş Düzenle</h3>
+                        </div>
+                        <hr>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">Düzenleme Başarılı</h4>
+                            <p>{{ message }}</p>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+
+                        <form action="#" method="post" novalidate="novalidate">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ form.isim.label(class='control-label mb-1') }}
+                                {{ form.isim(class='form-control', value=siparis.musteri_adi) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.proje_no.label(class='control-label mb-1') }}
+                                {{ form.proje_no(class='form-control', value=siparis.proje_no) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.tutar.label(class='control-label mb-1') }}
+                                {{ form.tutar(class='form-control', value=siparis.tutar) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.siparis_son_durum.label(class='control-label mb-1') }}
+                                {{ form.siparis_son_durum(class='form-control',value=siparis.siparis_son_durum ) }}
+                            </div>
+                            {{ form.submit(class='btn btn-primary') }}
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div> <!-- .card -->
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block add_script %}
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    swal({
+                        title: "İşlem Başarılı",
+                        text: "{{ message }}",
+                        type: "success",
+                        button: "Tamam"
+                    });
+                </script>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endblock %}

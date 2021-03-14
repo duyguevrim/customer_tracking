@@ -1,0 +1,583 @@
+{% extends 'base.html' %}
+
+{% block add_head %}
+    <title>Tahsilat Sistemi</title>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/d3/d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/c3/c3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/datatables_basic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/echarts/echarts.min.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="page-header page-header-light">
+        <div class="page-header-content header-elements-md-inline">
+            <div class="page-title d-flex">
+                <h4><span class="font-weight-semibold">Tahsilat</span> - Özet</h4>
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+
+        <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+            <div class="d-flex">
+                <div class="breadcrumb">
+                    <a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Tahsilat</a>
+                    <span class="breadcrumb-item active">Özet</span>
+                </div>
+
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title">Temsilciler ve Bakiyeleri</h5>
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+        </div>
+
+        <table class="table datatable-basic" id="temsilci-bakiye">
+            <thead>
+            <tr>
+                <th>Temsilci Adı</th>
+                <th>Müşteri Sayısı</th>
+                <th>45 Gün Başlangıç Bakiyesi</th>
+                <th>Tahsilat Miktarı</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+     {% if user.id != 2 and user.id != 28 and user.id != 27 and user.id != 26 and user.id != 25 and user.id != 23 and user.id != 22 %}
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.musteriler | length }}</td>
+                    <td>{{ user.kirkbes_bakiye }}</td>
+                    <td>{{ user.kirkbes_tahsilat }}</td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title">Müşteriler</h5>
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+        </div>
+
+        <table class="table datatable-basic">
+            <thead>
+            <tr>
+                <th>İsim</th>
+                <th>Telefon</th>
+                <th>Devir Bakiyesi</th>
+                <th>Güncel Bakiye</th>
+                <th>Görevli Satış Temsilcisi</th>
+                <th class="text-center">Eylemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for musteri in musteriler %}
+
+                <tr>
+                    <td>{{ musteri.isim }}</td>
+                    <td>{{ musteri.telefon }}</td>
+                    <td>{{ musteri.bakiye }}</td>
+                    <td>{{ musteri.bakiye - musteri.tahsilat }}</td>
+                    <td>{{ musteri.user_id | assistantname }}</td>
+                    <td class="text-center">
+                        <div class="list-icons">
+                            <div class="dropdown">
+                                <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                    <i class="icon-menu9"></i>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{{ url_for('musteri.edit_musteri', musteri_id=musteri.id) }}"
+                                       class="dropdown-item"><i class="icon-diff-added"></i> Düzenle</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title">Günlük Tahsilat Rakamları - Toplam</h5>
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="chart-container">
+                <div class="chart has-fixed-height" id="columns_basic_total"></div>
+            </div>
+        </div>
+    </div>
+
+    {% for user_id, graph_data in graph_dict.items() %}
+        {% if user_id != 2 and user_id != 30 and user_id != 29 and user_id != 28 and user_id != 27 and user_id != 26 and user_id != 25 and user_id != 23 and user_id != 22  %}
+            <div class="card">
+                <div class="card-header header-elements-inline">
+                    <h5 class="card-title">Günlük Tahsilat Rakamları - {{ user_id | assistantname }}</h5>
+                    <div class="header-elements">
+                        <div class="list-icons">
+                            <a class="list-icons-item" data-action="collapse"></a>
+                            <a class="list-icons-item" data-action="reload"></a>
+                            <a class="list-icons-item" data-action="remove"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="chart-container">
+                        <div class="chart has-fixed-height" id="columns_basic{{ user_id }}"></div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {#    <div class="card">#}
+    {#        <div class="card-header header-elements-inline">#}
+    {#            <h5 class="card-title">Müşteri Ekle</h5>#}
+    {#            <div class="header-elements">#}
+    {#                <div class="list-icons">#}
+    {#                    <a class="list-icons-item" data-action="collapse"></a>#}
+    {#                    <a class="list-icons-item" data-action="reload"></a>#}
+    {#                    <a class="list-icons-item" data-action="remove"></a>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {##}
+    {#        <div class="card-body">#}
+    {##}
+    {#            <form method="post">#}
+    {#                {{ form.hidden_tag() }}#}
+    {#                <fieldset class="mb-3">#}
+    {#                    <legend class="text-uppercase font-size-sm font-weight-bold">Müşteri Ekle#}
+    {#                    </legend>#}
+    {##}
+    {#                    <div class="form-group row">#}
+    {#                        {{ form.isim.label(class='col-form-label col-lg-2') }}#}
+    {#                        <div class="col-lg-10">#}
+    {#                            {{ form.isim(class='form-control', type='text') }}#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                    <div class="form-group row">#}
+    {#                        {{ form.telefon.label(class='col-form-label col-lg-2') }}#}
+    {#                        <div class="col-lg-10">#}
+    {#                            {{ form.telefon(class='form-control', type='text') }}#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                    <div class="form-group row">#}
+    {#                        {{ form.bakiye.label(class='col-form-label col-lg-2') }}#}
+    {#                        <div class="col-lg-10">#}
+    {#                            {{ form.bakiye(class='form-control', type='text') }}#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                    <div class="form-group row">#}
+    {#                        {{ form.parasut_no.label(class='col-form-label col-lg-2') }}#}
+    {#                        <div class="col-lg-10">#}
+    {#                            {{ form.parasut_no(class='form-control', type='text') }}#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                    <div class="form-group row">#}
+    {#                        {{ form.parasut_odeme_linki.label(class='col-form-label col-lg-2') }}#}
+    {#                        <div class="col-lg-10">#}
+    {#                            {{ form.parasut_odeme_linki(class='form-control', type='text') }}#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                    <div class="form-group row">#}
+    {#                        {{ form.temsilci.label(class='col-form-label col-lg-2') }}#}
+    {#                        <div class="col-lg-10">#}
+    {#                            {{ form.temsilci(class='form-control', type='text') }}#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {##}
+    {#                </fieldset>#}
+    {#                <div class="text-right">#}
+    {#                    {{ form.submit(class='btn btn-primary') }}#}
+    {#                </div>#}
+    {#            </form>#}
+    {#        </div>#}
+    {#    </div>#}
+{% endblock %}
+{% block add_script %}
+    <script>
+        /* ------------------------------------------------------------------------------
+ *
+ *  # C3.js - bars and pies
+ *
+ *  Demo JS code for c3_bars_pies.html page
+ *
+ * ---------------------------------------------------------------------------- */
+
+
+        // Setup module
+        // ------------------------------
+
+        var С3BarsPies = function () {
+
+
+            //
+            // Setup module components
+            //
+
+            // Chart
+            var _barsPiesExamples = function () {
+                if (typeof c3 == 'undefined') {
+                    console.warn('Warning - c3.min.js is not loaded.');
+                    return;
+                }
+
+                // Define charts elements
+                var pie_chart_element = document.getElementById('c3-pie-chart');
+
+
+                // Pie chart
+                if (pie_chart_element) {
+
+                    // Generate chart
+                    var pie_chart = c3.generate({
+                        bindto: pie_chart_element,
+                        size: {width: 350},
+                        color: {
+                            pattern: ['#3F51B5', '#FF9800', '#4CAF50', '#00BCD4', '#F44336']
+                        },
+                        data: {
+                            columns: [
+                                ['Tahsil Edilen Tutar', {{ (current_user.kirkbes_tahsilat) }}],
+                                ['Tahsil Edilecek Tutar', {{ current_user.kirkbes_bakiye }}],
+                            ],
+                            type: 'pie'
+                        }
+                    });
+                }
+            };
+
+
+            //
+            // Return objects assigned to module
+            //
+
+            return {
+                init: function () {
+                    _barsPiesExamples();
+                }
+            }
+        }();
+
+
+        // Initialize module
+        // ------------------------------
+
+        document.addEventListener('DOMContentLoaded', function () {
+            С3BarsPies.init();
+        });
+
+    </script>
+    <script>
+        {% for user_id, graph_data in graph_dict.items() %}
+            let columns_basic_element{{ user_id }} = document.getElementById('columns_basic{{ user_id }}');
+            if (columns_basic_element{{ user_id }}) {
+
+                // Initialize chart
+                var columns_basic = echarts.init(columns_basic_element{{ user_id }});
+
+
+                //
+                // Chart config
+                //
+
+                // Options
+                columns_basic.setOption({
+
+                    // Define colors
+                    color: ['#2ec7c9', '#b6a2de', '#5ab1ef', '#ffb980', '#d87a80'],
+
+                    // Global text styles
+                    textStyle: {
+                        fontFamily: 'Roboto, Arial, Verdana, sans-serif',
+                        fontSize: 13
+                    },
+
+                    // Chart animation duration
+                    animationDuration: 750,
+
+                    // Setup grid
+                    grid: {
+                        left: 0,
+                        right: 40,
+                        top: 35,
+                        bottom: 0,
+                        containLabel: true
+                    },
+
+                    // Add legend
+                    legend: {
+                        data: ['Tahsilat'],
+                        itemHeight: 8,
+                        itemGap: 20,
+                        textStyle: {
+                            padding: [0, 5]
+                        }
+                    },
+
+                    // Add tooltip
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: 'rgba(0,0,0,0.75)',
+                        padding: [10, 15],
+                        textStyle: {
+                            fontSize: 13,
+                            fontFamily: 'Roboto, sans-serif'
+                        }
+                    },
+
+                    // Horizontal axis
+                    xAxis: [{
+                        type: 'category',
+                        data: {{ graph_data[0] | safe }},
+                        axisLabel: {
+                            color: '#333'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#999'
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                color: '#eee',
+                                type: 'dashed'
+                            }
+                        }
+                    }],
+
+                    // Vertical axis
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            color: '#333'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#999'
+                            }
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: ['#eee']
+                            }
+                        },
+                        splitArea: {
+                            show: true,
+                            areaStyle: {
+                                color: ['rgba(250,250,250,0.1)', 'rgba(0,0,0,0.01)']
+                            }
+                        }
+                    }],
+
+                    // Add series
+                    series: [
+                        {
+                            name: 'Tahsilat',
+                            type: 'bar',
+                            data: {{ graph_data[1] }},
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true,
+                                        position: 'top',
+                                        textStyle: {
+                                            fontWeight: 500
+                                        }
+                                    }
+                                }
+                            },
+                            markLine: {
+                                data: [{type: 'average', name: 'Average'}]
+                            }
+                        }
+                    ]
+                });
+            }
+        {% endfor %}
+    </script>
+    <script>
+        let columns_basic_total = document.getElementById('columns_basic_total');
+        if (columns_basic_total) {
+
+            // Initialize chart
+            var columns_basic = echarts.init(columns_basic_total);
+
+
+            //
+            // Chart config
+            //
+
+            // Options
+            columns_basic.setOption({
+
+                // Define colors
+                color: ['#2ec7c9', '#b6a2de', '#5ab1ef', '#ffb980', '#d87a80'],
+
+                // Global text styles
+                textStyle: {
+                    fontFamily: 'Roboto, Arial, Verdana, sans-serif',
+                    fontSize: 13
+                },
+
+                // Chart animation duration
+                animationDuration: 750,
+
+                // Setup grid
+                grid: {
+                    left: 0,
+                    right: 40,
+                    top: 35,
+                    bottom: 0,
+                    containLabel: true
+                },
+
+                // Add legend
+                legend: {
+                    data: ['Tahsilat'],
+                    itemHeight: 8,
+                    itemGap: 20,
+                    textStyle: {
+                        padding: [0, 5]
+                    }
+                },
+
+                // Add tooltip
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(0,0,0,0.75)',
+                    padding: [10, 15],
+                    textStyle: {
+                        fontSize: 13,
+                        fontFamily: 'Roboto, sans-serif'
+                    }
+                },
+
+                // Horizontal axis
+                xAxis: [{
+                    type: 'category',
+                    data: {{ total_graph[0] | safe }},
+                    axisLabel: {
+                        color: '#333'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#999'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: '#eee',
+                            type: 'dashed'
+                        }
+                    }
+                }],
+
+                // Vertical axis
+                yAxis: [{
+                    type: 'value',
+                    axisLabel: {
+                        color: '#333'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#999'
+                        }
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: ['#eee']
+                        }
+                    },
+                    splitArea: {
+                        show: true,
+                        areaStyle: {
+                            color: ['rgba(250,250,250,0.1)', 'rgba(0,0,0,0.01)']
+                        }
+                    }
+                }],
+
+                // Add series
+                series: [
+                    {
+                        name: 'Tahsilat',
+                        type: 'bar',
+                        data: {{ total_graph[1] }},
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true,
+                                    position: 'top',
+                                    textStyle: {
+                                        fontWeight: 500
+                                    }
+                                }
+                            }
+                        },
+                        markLine: {
+                            data: [{type: 'average', name: 'Average'}]
+                        }
+                    }
+                ]
+            });
+        }
+    </script>
+
+
+{% endblock %}

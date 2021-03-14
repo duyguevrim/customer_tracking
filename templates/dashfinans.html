@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+
+{% block add_head %}
+    <title>Tahsilat Sistemi</title>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/d3/d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/c3/c3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/datatables_basic.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="page-header page-header-light">
+        <div class="page-header-content header-elements-md-inline">
+            <div class="page-title d-flex">
+                <h4><span class="font-weight-semibold">Tahsilat</span> - Özet</h4>
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+
+        <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+            <div class="d-flex">
+                <div class="breadcrumb">
+                    <a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Tahsilat</a>
+                    <span class="breadcrumb-item active">Özet</span>
+                </div>
+
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title text-warning">Onay Bekleyen Tahsilat Talepleri</h5>
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+        </div>
+
+        <table class="table datatable-basic">
+            <thead>
+            <tr>
+                <th>Müşteri Adı</th>
+                <th>Tahsilat Tutarı</th>
+                <th>Dekont</th>
+                <th>Açıklama</th>
+                <th>Kısakod</th>
+                <th class="text-center">Eylemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tahsilat in bekleyenler %}
+                <tr>
+                    <td>{{ tahsilat.musteri_id | customername }}</td>
+                    <td>{{ tahsilat.tutar }}</td>
+                    <td>{{ tahsilat.aciklama }}</td>
+                    <td>{{ tahsilat.shortcode }}</td>
+                    <td class="text-center">
+                        <div class="list-icons">
+                            <div class="dropdown">
+                                <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                    <i class="icon-menu9"></i>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{{ url_for('musteri.approve_tahsilat', tahsilat_id=tahsilat.id) }}"
+                                       class="dropdown-item"><i class="icon-diff-added"></i> Onayla</a>
+                                    {#                                    <a onclick="copyText()" class="dropdown-item"><i class="icon-copy"></i> Online Ödeme#}
+                                    {#                                        Bağlantısı</a>#}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title text-info">Onaylanan Tahsilat Talepleri</h5>
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+        </div>
+
+        <table class="table datatable-basic">
+            <thead>
+            <tr>
+                <th>Müşteri Adı</th>
+                <th>Tahsilat Tutarı</th>
+                <th>Dekont</th>
+                <th>Notlar</th>
+                <th>Kısakod</th>
+                <th class="text-center">Eylemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tahsilat in onaylananlar %}
+                <tr>
+                    <td>{{ tahsilat.musteri_id | customername }}</td>
+                    <td>{{ tahsilat.tutar }}</td>
+                    <td>{{ tahsilat.dekont }}</td>
+                    <td>{{ tahsilat.aciklama }}</td>
+                    <td>{{ tahsilat.shortcode }}</td>
+                    <td class="text-center">
+                        <div class="list-icons">
+                            <div class="dropdown">
+                                <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                    <i class="icon-menu9"></i>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{{ url_for('musteri.decline_tahsilat', tahsilat_id=tahsilat.id) }}"
+                                       class="dropdown-item"><i class="icon-diff-added"></i> Onayı Kaldır</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title">Müşteriler</h5>
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+        </div>
+
+        <table class="table datatable-basic">
+            <thead>
+            <tr>
+                <th>İsim</th>
+                <th>Telefon</th>
+                <th>Bakiye</th>
+                <th>Kalan Bakiye</th>
+                <th>Görevli Satış Temsilcisi</th>
+                <th>Paraşüt No</th>
+                <th class="text-center">Eylemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for musteri in current_user.musteriler %}
+                <tr>
+                    <td>{{ musteri.isim }}</td>
+                    <td>{{ musteri.telefon }}</td>
+                    <td>{{ musteri.bakiye }}</td>
+                    <td>{{ musteri.bakiye - musteri.tahsilat }} TL</td>
+                    <td>{{ musteri.user_id | assistantname }}</td>
+                    <td>{{ musteri.parasut_no }}</td>
+                    <td class="text-center">
+                        <div class="list-icons">
+                            <div class="dropdown">
+                                <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                    <i class="icon-menu9"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{{ url_for('musteri.add_tahsilat', musteri_id=musteri.id) }}"
+                                       class="dropdown-item"><i class="icon-diff-added"></i> Tahsilat Ekle</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block add_script %}
+    <script>
+        /* ------------------------------------------------------------------------------
+ *
+ *  # C3.js - bars and pies
+ *
+ *  Demo JS code for c3_bars_pies.html page
+ *
+ * ---------------------------------------------------------------------------- */
+
+
+        // Setup module
+        // ------------------------------
+
+        var С3BarsPies = function () {
+
+
+            //
+            // Setup module components
+            //
+
+            // Chart
+            var _barsPiesExamples = function () {
+                if (typeof c3 == 'undefined') {
+                    console.warn('Warning - c3.min.js is not loaded.');
+                    return;
+                }
+
+                // Define charts elements
+                var pie_chart_element = document.getElementById('c3-pie-chart');
+
+
+                // Pie chart
+                if (pie_chart_element) {
+
+                    // Generate chart
+                    var pie_chart = c3.generate({
+                        bindto: pie_chart_element,
+                        size: {width: 350},
+                        color: {
+                            pattern: ['#3F51B5', '#FF9800', '#4CAF50', '#00BCD4', '#F44336']
+                        },
+                        data: {
+                            columns: [
+                                ['Tahsil Edilen Tutar', 30],
+                                ['Tahsil Edilecek Tutar', {{ current_user.kirkbes_bakiye }}],
+                            ],
+                            type: 'pie'
+                        }
+                    });
+                }
+            };
+
+
+            //
+            // Return objects assigned to module
+            //
+
+            return {
+                init: function () {
+                    _barsPiesExamples();
+                }
+            }
+        }();
+
+
+        // Initialize module
+        // ------------------------------
+
+        document.addEventListener('DOMContentLoaded', function () {
+            С3BarsPies.init();
+        });
+
+    </script>
+{% endblock %}

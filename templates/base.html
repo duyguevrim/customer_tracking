@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet"
+          type="text/css">
+    <link href="{{ url_for('static', filename='css/icons/icomoon/styles.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/bootstrap_limitless.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/layout.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/components.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/colors.min.css') }}" rel="stylesheet" type="text/css">
+    <!-- /global stylesheets -->
+
+    <!-- Core JS files -->
+    <script src="{{ url_for('static', filename='js/main/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/loaders/blockui.min.js') }}"></script>
+    <!-- /core JS files -->
+
+    <!-- Theme JS files -->
+    <script src="{{ url_for('static', filename='js/plugins/visualization/d3/d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/d3/d3_tooltip.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/styling/switchery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/bootstrap_multiselect.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/ui/moment/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/pickers/daterangepicker.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/clipboard.js') }}"></script>
+    {% block add_head %}
+
+    {% endblock %}
+    {#	<script src="js/demo_pages/dashboard.js"></script>#}
+    <!-- /theme JS files -->
+
+</head>
+
+<body>
+
+<!-- Main navbar -->
+<div class="navbar navbar-expand-md navbar-dark">
+    <div class="navbar-brand">
+        <a href="/" class="d-inline-block">
+            <img src="{{ url_for('static', filename='images/company-logo-beyaz.png') }}" alt=""
+                 style="min-height: 30px !important;">
+        </a>
+    </div>
+
+    <div class="d-md-none">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">
+            <i class="icon-tree5"></i>
+        </button>
+        <button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
+            <i class="icon-paragraph-justify3"></i>
+        </button>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbar-mobile">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="#" class="navbar-nav-link sidebar-control sidebar-main-toggle d-none d-md-block">
+                    <i class="icon-paragraph-justify3"></i>
+                </a>
+            </li>
+
+        </ul>
+
+        <span class="navbar-text ml-md-3 mr-md-auto">
+				<span class="badge bg-success">Çevrimiçi</span>
+			</span>
+
+        <ul class="navbar-nav">
+
+            <li class="nav-item dropdown dropdown-user">
+                <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
+                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle"
+                         alt="">
+                    <span>{{ current_user.name }}</span>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                                   <a href="{{ url_for('logout') }}" class="dropdown-item"><i class="icon-switch2"></i> Çıkış Yap</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- /main navbar -->
+
+
+<!-- Page content -->
+<div class="page-content">
+
+    <!-- Main sidebar -->
+    <div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
+
+        <!-- Sidebar mobile toggler -->
+        <div class="sidebar-mobile-toggler text-center">
+            <a href="#" class="sidebar-mobile-main-toggle">
+                <i class="icon-arrow-left8"></i>
+            </a>
+            Navigation
+            <a href="#" class="sidebar-mobile-expand">
+                <i class="icon-screen-full"></i>
+                <i class="icon-screen-normal"></i>
+            </a>
+        </div>
+        <!-- /sidebar mobile toggler -->
+
+
+        <!-- Sidebar content -->
+        <div class="sidebar-content">
+
+            <!-- User menu -->
+            <div class="sidebar-user">
+                <div class="card-body">
+                    <div class="media">
+                        <div class="mr-3">
+                            <a href="#"><img src="../../../../global_assets/images/placeholders/placeholder.jpg"
+                                             width="38" height="38" class="rounded-circle" alt=""></a>
+                        </div>
+
+                        <div class="media-body">
+                            <div class="media-title font-weight-semibold">{{ current_user.name }}</div>
+                            <div class="font-size-xs opacity-50">
+                                {{ current_user.email }}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- /user menu -->
+
+
+            <!-- Main navigation -->
+            <div class="card card-sidebar-mobile">
+                <ul class="nav nav-sidebar" data-nav-type="accordion" id="btnContainer">
+                    {% if current_user.role == "Employee" and current_user.id != 42 or current_user.role == "Manager" %}
+                        <!-- Main -->
+                        <li class="nav-item-header">
+                            <div class="text-uppercase font-size-xs line-height-xs">Müşteriler</div>
+                            <i class="icon-menu" title="45 Gün Modülü"></i></li>
+                        <li class="nav-item"><a href="{{ url_for('musteri.list_musteri') }}" class="nav-link"><i
+                                class="icon-width"></i> <span>Müşteriler</span></a></li>
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Tahsilatlar</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                                <li class="nav-item"><a href="{{ url_for('musteri.list_pending_tahsilat') }}"
+                                                        class="nav-link">Onay Bekleyenler</a></li>
+                                <li class="nav-item"><a href="{{ url_for('musteri.approved_tahsilat') }}"
+                                                        class="nav-link">Onaylananlar</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a href="{{ url_for('musteri.grafik') }}" class="nav-link"><i
+                                class="icon-copy"></i> <span>Tahsilat Oranı</span></a></li>
+
+                    {% endif %}
+                    <!--{% if current_user.role == "Manager" %}-->
+
+
+                        <!--{% endif %}-->
+
+
+                    {% if current_user.role == "Finance" %}
+                        <!-- Main -->
+                        <li class="nav-item-header">
+                            <div class="text-uppercase font-size-xs line-height-xs">Müşteriler</div>
+                            <i class="icon-menu" title="45 Gün Modülü"></i></li>
+                        <li class="nav-item">
+                            <a href="/" class="nav-link active">
+                                <i class="icon-home4"></i>
+                                <span>
+									Anasayfa (Özet)
+								</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Tahsilatlar</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                                <li class="nav-item"><a href="{{ url_for('musteri.list_pending_tahsilat') }}"
+                                                        class="nav-link">Onay Bekleyenler</a></li>
+                                <li class="nav-item"><a href="{{ url_for('musteri.approved_tahsilat') }}"
+                                                        class="nav-link">Onaylananlar</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link"><i class="icon-cash3"></i> <span>Ödemeler</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                                <li class="nav-item"><a href="{{ url_for('musteri.list_odeme') }}"
+                                                        class="nav-link">Ödemeler</a></li>
+                                <li class="nav-item"><a href="{{ url_for('musteri.indirim_list') }}"
+                                                        class="nav-link">İndirim Düzeltmeler</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a href="{{ url_for('musteri.list_musteri') }}" class="nav-link"><i
+                                class="icon-width"></i> <span>Müşteriler</span></a></li>
+
+                        <li class="nav-item-header">
+                            <div class="text-uppercase font-size-xs line-height-xs">TAHSİLAT</div>
+                            <i class="icon-menu" title="Güncel Modül"></i></li>
+                        <li class="nav-item"><a href="{{ url_for('guncel_modul.tahsilat_durum') }}" class="nav-link"><i
+                                class="icon-copy"></i> <span>Tahsilat İşlemleri</span></a></li>
+                        <!-- /main -->
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="card card-sidebar-mobile">
+                <ul class="nav nav-sidebar" data-nav-type="accordion" id="btnContainer">
+                    {% if current_user.role == "Manager" %}
+                        <li class="nav-item-header">
+                            <div class="text-uppercase font-size-xs line-height-xs">TAHSİLAT</div>
+                            <i class="icon-menu" title="Güncel Modül"></i></li>
+                        <li class="nav-item"><a href="{{ url_for('guncel_modul.tahsilat_ekle_crm') }}" class="nav-link"><i
+                                class="icon-copy"></i> <span>Tahsilat Ekle </span></a></li>
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Tahsilat Son Durumu</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                                <li class="nav-item"><a href="{{ url_for('guncel_modul.crm_onay_bekleyen') }}"
+                                                        class="nav-link">Onay Bekleyenler</a></li>
+                                <li class="nav-item"><a href="{{ url_for('guncel_modul.crm_onaylanan') }}"
+                                                        class="nav-link">Onaylananlar</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- /main -->
+                    {% endif %}
+
+
+                    {% if current_user.id != 42 %}
+                        <li class="nav-item-header">
+                            <div class="text-uppercase font-size-xs line-height-xs">TAHSİLAT</div>
+                            <i class="icon-menu" title="Güncel Modül"></i></li>
+                        <li class="nav-item"><a href="{{ url_for('guncel_modul.tahsilat_ekle_crm') }}" class="nav-link"><i
+                                class="icon-copy"></i> <span>Tahsilat Ekle </span></a></li>
+                        <li class="nav-item nav-item-submenu">
+                            <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Tahsilat Son Durumu</span></a>
+                            <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                                <li class="nav-item"><a href="{{ url_for('guncel_modul.crm_onay_bekleyen') }}"
+                                                        class="nav-link">Onay Bekleyenler</a></li>
+                                <li class="nav-item"><a href="{{ url_for('guncel_modul.crm_onaylanan') }}"
+                                                        class="nav-link">Onaylananlar</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- /main -->
+                    {% endif %}
+                    {% endif %}
+                    {% if current_user.role == "Finance" %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('guncel_modul.siparis_list_finance') }}" class="nav-link"><i
+                                    class="icon-copy"></i> <span>Siparişlerim</span></a>
+                        </li>
+                        <li class="nav-item"><a href="{{ url_for('guncel_modul.tahsilat_islem') }}" class="nav-link"><i
+                                class="icon-width"></i> <span>Tahsilat İşlemleri</span></a></li>
+                        <li class="nav-item nav-item-submenu">
+                        <a href="#" class="nav-link"><i class="icon-cash3"></i> <span>Ödemeler</span></a>
+                        <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                        <li class="nav-item"><a href="{{ url_for('guncel_modul.list_guncel_odeme') }}"
+                                                class="nav-link">Ödemeler</a></li>
+
+
+                        <!-- /main -->
+                    {% endif %}
+                    </ul>
+            </div>
+            <!-- /main navigation -->
+
+        </div>
+        <!-- /sidebar content -->
+
+    </div>
+    <!-- /main sidebar -->
+
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+
+        <!-- Page header -->
+        {% block page_header %}
+        {% endblock %}
+        <!-- /page header -->
+
+
+        <!-- Content area -->
+        <div class="content">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+        <!-- /content area -->
+        <!-- Footer -->
+        <div class="navbar navbar-expand-lg navbar-light">
+            <div class="text-center d-lg-none w-100">
+                <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse"
+                        data-target="#navbar-footer">
+                    <i class="icon-unfold mr-2"></i>
+                    Footer
+                </button>
+            </div>
+
+            <div class="navbar-collapse collapse" id="navbar-footer">
+					<span class="navbar-text">
+						&copy; 2020. <a href="#">Tahsilat Portalı v1.2.0</a> by <a
+                            href="#" target="_blank">Duygu Evrim Odabaş</a>
+					</span>
+            </div>
+        </div>
+        <!-- /footer -->
+
+    </div>
+    <!-- /main content -->
+
+</div>
+<!-- /page content -->
+{% block add_script %}
+{% endblock %}
+
+</body>
+</html>

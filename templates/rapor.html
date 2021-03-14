@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block add_head %}
+    <title>Tahsilat Sistemi</title>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/d3/d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/c3/c3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/datatables_basic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/visualization/echarts/echarts.min.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="page-header page-header-light">
+        <div class="page-header-content header-elements-md-inline">
+            <div class="page-title d-flex">
+                <h4><span class="font-weight-semibold">Tahsilat</span> - Özet</h4>
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+
+        <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+            <div class="d-flex">
+                <div class="breadcrumb">
+                    <a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Tahsilat</a>
+                    <span class="breadcrumb-item active">Özet</span>
+                </div>
+
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header header-elements-inline">
+                    <h5 class="card-title">Tahsilat Oranı</h5>
+                    <div class="header-elements">
+                        <div class="list-icons">
+                            <a class="list-icons-item" data-action="collapse"></a>
+                            <a class="list-icons-item" data-action="reload"></a>
+                            <a class="list-icons-item" data-action="remove"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="chart-container text-center">
+                        <div class="d-inline-block" id="c3-pie-chart"></div>
+                    </div>
+                    <p>
+                        <strong>Hedeflenen Tahsilat Tutarı:</strong> {{ user.toplam_siparis_tutari }} TL <br>
+                        <strong>Yapılan Tahsilat Miktarı: </strong> {{ user.toplam_siparis_tahsilati }} TL
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% block add_script %}
+    <script>
+        /* ------------------------------------------------------------------------------
+ *
+ *  # C3.js - bars and pies
+ *
+ *  Demo JS code for c3_bars_pies.html page
+ *
+ * ---------------------------------------------------------------------------- */
+
+
+        // Setup module
+        // ------------------------------
+
+        var С3BarsPies = function () {
+
+
+            //
+            // Setup module components
+            //
+
+            // Chart
+            var _barsPiesExamples = function () {
+                if (typeof c3 == 'undefined') {
+                    console.warn('Warning - c3.min.js is not loaded.');
+                    return;
+                }
+
+                // Define charts elements
+                var pie_chart_element = document.getElementById('c3-pie-chart');
+
+
+                // Pie chart
+                if (pie_chart_element) {
+
+                    // Generate chart
+                    var pie_chart = c3.generate({
+                        bindto: pie_chart_element,
+                        size: {width: 350},
+                        color: {
+                            pattern: ['#3F51B5', '#FF9800', '#4CAF50', '#00BCD4', '#F44336']
+                        },
+                        data: {
+                            columns: [
+
+                                ['Tahsil Edilen Tutar', {{ (user.toplam_siparis_tahsilati) }}],
+                                ['Tahsil Edilecek Tutar', {{ user.toplam_siparis_tutari - user.toplam_siparis_tahsilati}}],
+                            ],
+                            type: 'pie'
+                        }
+                    });
+                }
+            };
+
+
+            //
+            // Return objects assigned to module
+            //
+
+            return {
+                init: function () {
+                    _barsPiesExamples();
+                }
+            }
+        }();
+
+
+        // Initialize module
+        // ------------------------------
+
+        document.addEventListener('DOMContentLoaded', function () {
+            С3BarsPies.init();
+        });
+
+    </script>
+{% endblock %}
+{% endblock %}

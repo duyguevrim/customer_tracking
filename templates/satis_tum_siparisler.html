@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block add_head %}
+<title>Müşteriler</title>
+<script src="{{ url_for('static', filename='js/plugins/tables/datatables/datatables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/forms/selects/select2.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/demo_pages/datatables_basic.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/notifications/bootbox.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/demo_pages/components_modals.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+<div class="page-header page-header-light">
+    <div class="page-header-content header-elements-md-inline">
+        <div class="page-title d-flex">
+            <h4><span class="font-weight-semibold">Siparişler</span></h4>
+            <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+        </div>
+    </div>
+
+    <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+        <div class="d-flex">
+            <div class="breadcrumb">
+                <a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Siparişler</a>
+            </div>
+
+            <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header header-elements-inline">
+        <h5 class="card-title">Tüm Siparişler</h5>
+        <div class="header-elements">
+            <div class="list-icons">
+                <a class="list-icons-item" data-action="collapse"></a>
+                <a class="list-icons-item" data-action="reload"></a>
+                <a class="list-icons-item" data-action="remove"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+
+    </div>
+
+    <table class="table datatable-basic">
+        <thead>
+        <tr>
+            <th>Sipariş Proje No</th>
+            <th>Müşteri Adı</th>
+            <th>Sipariş Tutarı</th>
+            <th>Güncel Tutar</th>
+            <th>Son Ödeme Tarihi</th>
+            <th>İşin Alındığı Tarih</th>
+            <th>Son Sipariş Durumu (1 ŞUBAT)</th>
+            <th>Evrak Çıkış Tarihi</th>
+            <th>Sipariş Ödendi Mi?</th>
+
+            <th class="text-center">Eylemler</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for siparis in siparisler %}
+        <tr>
+            <td>{{ siparis.proje_no }}</td>
+            <td>{{ siparis.musteri_adi }}</td>
+            <td>{{ siparis.siparis_tutari }}</td>
+            <td>{{ siparis.siparis_tutari - siparis.tahsilat }}</td>
+            <td>{{ siparis.son_odeme_tarihi }}</td>
+            <td>{{ siparis.isin_alinma_tarihi }}</td>
+            <td>{{ siparis.siparis_son_durum }}</td>
+            <td>{{ siparis.evrak_cikis_tarihi }}</td>
+            {% if siparis.siparis_tutari - siparis.tahsilat|float == 0.0 %}
+            <td><i class="icon-checkmark"></i></td>
+            {% endif %}
+            {% if siparis.siparis_tutari - siparis.tahsilat|float != 0.0 %}
+            <td> HAYIR</td>
+            {% endif %}
+             <td class="text-center">
+                        <div class="list-icons">
+                            <div class="dropdown">
+                                <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                    <i class="icon-menu9"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{{ url_for('guncel_modul.tahsilat_ekle', siparis_id=siparis.id) }}"
+                                       class="dropdown-item"><i class="icon-diff-added"></i> Tahsilat Ekle</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block add_script %}
+<script>
+    new ClipboardJS('.copy-button');
+</script>
+{% endblock %}
+

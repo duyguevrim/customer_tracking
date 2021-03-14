@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block add_head %}
+    <title>Tahsilat Ekle</title>
+    <script src="{{ url_for('static', filename='js/plugins/notifications/sweet_alert.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/styling/uniform.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/bootstrap_multiselect.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/styling/switchery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/form_inputs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/extra_sweetalert.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="page-header page-header-light">
+        <div class="page-header-content header-elements-md-inline">
+            <div class="page-title d-flex">
+                <h4><span class="font-weight-semibold">Tahsilat</span> - Tahsilat Ekle</h4>
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+        </div>
+
+        <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+            <div class="d-flex">
+                <div class="breadcrumb">
+                    <a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Tahsilat</a>
+                    <span class="breadcrumb-item active">Tahsilat Ekle</span>
+                </div>
+
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title">Tahsilat Ekle</h5>
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <p class="mb-4"> Bu menü güncel tahsilat listenizde olmayan , haricen yaptığınız tahsilatlar için oluşturulmuştur.
+
+Portalda, güncel tahsilat oranınızda herhangi bir değişikliğe sebebiyet vermeyecektir.  </p>
+
+            <form method="post" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <fieldset class="mb-3">
+                    <legend class="text-uppercase font-size-sm font-weight-bold">
+                    </legend>
+
+                    <div class="form-group row">
+                        {{ form.isim.label(class='col-form-label col-lg-2') }}
+                        <div class="col-lg-10">
+                            {{ form.isim(class='form-control', type='text') }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        {{ form.crm_kodu.label(class='col-form-label col-lg-2') }}
+                        <div class="col-lg-10">
+                            {{ form.crm_kodu(class='form-control', type='text') }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        {{ form.tutar.label(class='col-form-label col-lg-2') }}
+                        <div class="col-lg-10">
+                            {{ form.tutar(class='form-control', onchange="this.value = this.value.replace(/,/g, '.')") }}
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        {{ form.aciklama.label(class='col-form-label col-lg-2') }}
+                        <div class="col-lg-10">
+                            {{ form.aciklama(class='form-control') }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        {{ form.dekont.label(class='col-form-label col-lg-2') }}
+                        <div class="col-lg-10">
+                            {{ form.dekont(type='file', class='form-control-uniform') }}
+                        </div>
+                    </div>
+
+                </fieldset>
+                {% if "duzenle" not in request.path %}
+                    <div class="text-right">
+                        {{ form.submit(class='btn btn-primary') }}
+                    </div>
+                {% else %}
+                    <div class="text-right">
+                        {{ form.submit2(class='btn btn-primary') }}
+                    </div>
+                {% endif %}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block add_script %}
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    swal({
+                        title: "İşlem Başarılı",
+                        text: "{{ message }}",
+                        type: "success",
+                        button: "Tamam"
+                    });
+                </script>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+{% endblock %}

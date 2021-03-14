@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block add_head %}
+    {% if "onaylananlar" not in request.path %}
+        <title>Onay Bekleyen Tahsilat Talepleri</title>
+    {% else %}
+        <title>Onaylanan Tahsilat Talepleri</title>
+    {% endif %}
+    <script src="{{ url_for('static', filename='js/plugins/notifications/bootbox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/tables/datatables/datatables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/forms/selects/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/datatables_basic.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo_pages/components_modals.js') }}"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="page-header page-header-light">
+        <div class="page-header-content header-elements-md-inline">
+            <div class="page-title d-flex">
+                {% if "onaylananlar" not in request.path %}
+                    <h4><span class="font-weight-semibold">Tahsilat</span> - Onay Bekleyen Tahsilat Talepleri</h4>
+                {% else %}
+                    <h4><span class="font-weight-semibold">Tahsilat</span> - Onaylanan Tahsilat Talepleri</h4>
+                {% endif %}
+
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+
+        <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+            <div class="d-flex">
+                <div class="breadcrumb">
+                    <a href="index.html" class="breadcrumb-item"><i class="icon-home2 mr-2"></i> Tahsilat</a>
+                    {% if "onaylananlar" not in request.path %}
+                        <span class="breadcrumb-item active">Onay Bekleyenler</span>
+                    {% else %}
+                        <span class="breadcrumb-item active">Onaylananlar</span>
+                    {% endif %}
+                </div>
+
+                <a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header header-elements-inline">
+            {% if "onaylananlar" not in request.path %}
+                <h5 class="card-title">{{ current_user.name }} Kullanıcısına Ait Onay Bekleyen Tahsilat Talepleri</h5>
+            {% else %}
+                <h5 class="card-title">{{ current_user.name }} Kullanıcısına Ait Onaylanan Tahsilat Talepleri</h5>
+            {% endif %}
+
+            <div class="header-elements">
+                <div class="list-icons">
+                    <a class="list-icons-item" data-action="collapse"></a>
+                    <a class="list-icons-item" data-action="reload"></a>
+                    <a class="list-icons-item" data-action="remove"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+        </div>
+
+        <table class="table datatable-basic">
+            <thead>
+            <tr>
+                <th>Müşteri Adı</th>
+                <th>CRM Müşteri Kodu**</th>
+                <th>Tahsilat Tutarı</th>
+                <th>Dekont</th>
+                <th>Notlar</th>
+                <th>Son Durum</th>
+                <th class="text-center">Eylemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tahsilat in tahsilatlar %}
+                <tr>
+                    <td>{{ tahsilat.musteri_adi_crm}}</td>
+                    <td>{{ tahsilat.crm_kodu}}</td>
+                    <td>{{ tahsilat.tahsilat_tutari }}</td>
+                    {% if tahsilat.dekont %}
+                        <td>{{ tahsilat.dekont }}</td>
+                    {% else %}
+                        <td>YOK</td>
+                    {% endif %}
+                    <td>{{ tahsilat.aciklama }}</td>
+                    <td>{{ tahsilat.durum }}</td>
+                    {% if "onaylananlar" not in request.path %}
+                        <td class="text-center">
+                            <div class="list-icons">
+                                <div class="dropdown">
+                                    <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                        <i class="icon-menu9"></i>
+                                    </a>
+
+
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" data-toggle="modal"
+                                           data-target="#modal_theme_danger3{{ tahsilat.id }}"><i
+                                                class="icon-diff-removed"></i> Sil</a>
+
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    {% else %}
+                        <td>Güncellenecek</td>
+                    {% endif %}
+                </tr>
+                {% if "onaylananlar" not in request.path %}
+                    {% include 'partials/modal.html' %}
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
